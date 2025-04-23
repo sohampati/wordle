@@ -18,413 +18,55 @@ possible_words = ["cigar","rebut","sissy","humph","awake","blush","focal","evade
 
 
 
-guesses = 0
-firstResult = 'bbbbb'
-while guesses <= 6 and firstResult != 'ggggg':
+def apply_green_filter(words, greens):
+    return [w for w in words if all(g == '' or w[i] == g for i, g in enumerate(greens))]
 
-    firstInput = input("What is your guess? ")
+def apply_yellow_filter(words, yellows):
+    return [
+        w for w in words if all(
+            y == '' or (y in w and w[i] != y) for i, y in enumerate(yellows)
+        )
+    ]
 
-    firstResult = input("What is the result of your input(g - green,y - yellow,b - black)? ")
+def apply_black_filter(words, blacks, yellows, greens):
+    # Only remove letters not in yellow/green
+    banned_letters = set(blacks) - set(yellows) - set(greens)
+    return [w for w in words if all(c not in w for c in banned_letters)]
 
-    splitted = list(firstResult)
+def wordle_solver():
+    guesses = 0
+    firstResult = 'bbbbb'
+    current_possible = possible_words.copy()
 
-    slatty = list(firstInput)
+    while guesses < 6 and firstResult != 'ggggg':
+        print(f"\nRemaining possible words: {len(current_possible)}")
+        print(random.sample(current_possible, min(10, len(current_possible))))
 
-    Letters_ToUse0 = ""
+        firstInput = input("What is your guess? ").lower()
+        firstResult = input("What is the result of your input (g=green, y=yellow, b=black)? ").lower()
 
-    No_Use0 = ""
+        green_letters = [''] * 5
+        yellow_letters = [''] * 5
+        black_letters = [''] * 5
 
-    Tentative_Use0 = ""
+        for i in range(5):
+            if firstResult[i] == 'g':
+                green_letters[i] = firstInput[i]
+            elif firstResult[i] == 'y':
+                yellow_letters[i] = firstInput[i]
+            else:
+                black_letters[i] = firstInput[i]
 
+        current_possible = apply_green_filter(current_possible, green_letters)
+        current_possible = apply_yellow_filter(current_possible, yellow_letters)
+        current_possible = apply_black_filter(current_possible, black_letters, yellow_letters, green_letters)
 
+        guesses += 1
 
-    FirstFilter1 = []
-
-    FirstFilter2 = []
-
-    FirstFilter3 = []
-
-    FirstFilter4 = []
-
-    FirstFilter5 = []
-
-
-
-    # first letter setup
-
-
-
-    if splitted[0] == "g":
-
-        Letters_ToUse0 = firstInput[0]
-
-    elif splitted[0] == "y":
-
-        Tentative_Use0 = firstInput[0]
-
+    if firstResult == 'ggggg':
+        print("\nCongrats, you got it!")
     else:
+        print("\nOut of guesses. Try again!")
 
-        No_Use0 = firstInput[0]
-
-    #second letter setup
-
-    Letters_ToUse1 = ""
-
-    Tentative_Use1 = ""
-
-    No_Use1 = ""
-
-
-
-
-
-    if splitted[1] == "g":
-
-        Letters_ToUse1 = firstInput[1]
-
-    elif splitted[1] == "y":
-
-        Tentative_Use1 = firstInput[1]
-
-    else:
-
-        No_Use1 = firstInput[1]
-
-
-
-
-
-    # third letter setup
-
-    Letters_ToUse2 = ""
-
-    Tentative_Use2 = ""
-
-    No_Use2 = ""
-
-
-
-
-
-    if splitted[2] == "g":
-
-        Letters_ToUse2 = firstInput[2]
-
-    elif splitted[2] == "y":
-
-        Tentative_Use2 = firstInput[2]
-
-    else:
-
-        No_Use2 = firstInput[2]
-
-
-
-    #fourth letter setup
-
-    Letters_ToUse3 = ""
-
-    Tentative_Use3 = ""
-
-    No_Use3 = ""
-
-
-
-
-
-    if splitted[3] == "g":
-
-        Letters_ToUse3 = firstInput[3]
-
-    elif splitted[3] == "y":
-
-        Tentative_Use3 = firstInput[3]
-
-    else:
-
-        No_Use3 = firstInput[3]
-
-
-
-
-
-    #fifth letter setup
-
-
-
-    Letters_ToUse4 = ""
-
-    Tentative_Use4 = ""
-
-    No_Use4 = ""
-
-
-
-
-
-    if splitted[4] == "g":
-
-        Letters_ToUse4 = firstInput[4]
-
-    elif splitted[4] == "y":
-
-        Tentative_Use4 = firstInput[4]
-
-
-
-    else:
-
-        No_Use4 = firstInput[4]
-
-
-
-
-
-
-
-
-
-
-
-    # Green Methods
-
-    if Letters_ToUse0 != "":
-
-        possible_words_copy = possible_words.copy()
-
-        for ele in possible_words_copy:
-
-            
-
-            if ele[0:1] != Letters_ToUse0:
-
-                
-
-                possible_words.remove(ele)
-
-
-
-    if Letters_ToUse1 != "":
-
-        possible_words_copy1 = possible_words.copy()
-
-        
-
-        for ele in possible_words_copy1:
-
-            if ele[1:2] != Letters_ToUse1:
-
-                possible_words.remove(ele)
-
-
-
-
-
-    if Letters_ToUse2 != "":
-
-        possible_words_copy2 = possible_words.copy()
-
-        
-
-        for ele in possible_words_copy2:
-
-
-
-            if ele[2:3] != Letters_ToUse2:
-
-                possible_words.remove(ele)
-
-
-
-
-
-    if Letters_ToUse3 != "":
-
-        possible_words_copy3 = possible_words.copy()
-
-        for ele in possible_words_copy3:
-
-
-
-            if ele[3:4] != Letters_ToUse3:
-
-                possible_words.remove(ele)
-
-
-
-    if Letters_ToUse4 != "":
-
-        possible_words_copy4 = possible_words.copy()
-
-        for ele in possible_words_copy4:
-
-
-
-            if ele[4:5] != Letters_ToUse4:
-
-                possible_words.remove(ele)
-
-
-
-
-
-    # Black methods
-
-    if No_Use0 != "":
-
-        possible_words_copy5 = possible_words.copy()
-
-        for ele in possible_words_copy5:
-
-            if ele[0:1] == No_Use0 or ele[1:2] == No_Use0 or ele[2:3] == No_Use0 or ele[3:4] == No_Use0 or ele[4:5] == No_Use0:
-
-                
-
-                possible_words.remove(ele)
-
-
-
-    if No_Use1 != "":
-
-        possible_words_copy6 = possible_words.copy()
-
-        for ele in possible_words_copy6:
-
-            if ele[0:1] == No_Use1 or ele[1:2] == No_Use1 or ele[2:3] == No_Use1 or ele[3:4] == No_Use1 or ele[4:5] == No_Use1:
-
-                
-
-                possible_words.remove(ele)
-
-
-
-
-
-    if No_Use2 != "":
-
-        possible_words_copy7 = possible_words.copy()
-
-        for ele in possible_words_copy7:
-
-            if ele[0:1] == No_Use2 or ele[1:2] == No_Use2 or ele[2:3] == No_Use2 or ele[3:4] == No_Use2 or ele[4:5] == No_Use2:
-
-                possible_words.remove(ele)
-
-
-
-    if No_Use3 != "":
-
-        possible_words_copy8 = possible_words.copy()
-
-        for ele in possible_words_copy8:
-
-            if ele[0:1] == No_Use3 or ele[1:2] == No_Use3 or ele[2:3] == No_Use3 or ele[3:4] == No_Use3 or ele[4:5] == No_Use3:
-
-                possible_words.remove(ele)
-
-
-
-    if No_Use4 != "":
-
-        possible_words_copy9 = possible_words.copy()
-
-        for ele in possible_words_copy9:
-
-            if ele[0:1] == No_Use4 or ele[1:2] == No_Use4 or ele[2:3] == No_Use4 or ele[3:4] == No_Use4 or ele[4:5] == No_Use4:
-
-                possible_words.remove(ele)
-
-
-
-
-
-    # yellow methods
-
-    possible_words_copy10 = possible_words.copy()
-
-    
-
-    for ele in possible_words_copy10:
-
-        if Tentative_Use0 not in ele:
-
-            possible_words.remove(ele)
-
-        elif Tentative_Use0 == ele[0]:
-
-            possible_words.remove(ele)
-
-        
-
-
-
-    possible_words_copy11 = possible_words.copy()
-
-    
-
-    for ele in possible_words_copy11:
-
-        if Tentative_Use1 not in ele:
-
-            possible_words.remove(ele)
-
-        elif Tentative_Use1 == ele[1]:
-
-            possible_words.remove(ele)
-
-        
-
-
-
-    possible_words_copy12 = possible_words.copy()
-
-    for ele in possible_words_copy12:
-
-        if Tentative_Use2 not in ele:
-
-            possible_words.remove(ele)
-
-        elif Tentative_Use2 == ele[2]:
-
-            possible_words.remove(ele)
-
-
-
-    possible_words_copy13 = possible_words.copy()
-
-    for ele in possible_words_copy13:
-
-        if Tentative_Use3 not in ele:
-
-            possible_words.remove(ele)
-
-        elif Tentative_Use3 == ele[3]:
-
-            possible_words.remove(ele)
-
-
-
-    possible_words_copy14 = possible_words.copy()
-
-    for ele in possible_words_copy14:
-
-        if Tentative_Use4 not in ele:
-
-            possible_words.remove(ele)
-
-        elif Tentative_Use4 == ele[4]:
-
-            possible_words.remove(ele)
-
-    
-
-    print(possible_words)
-
-    
-
-    guesses += 1
-
-
-
-
-
+if __name__ == "__main__":
+    wordle_solver()
