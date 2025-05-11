@@ -6,6 +6,7 @@ function App() {
   const [currentWord, setCurrentWord] = useState("");
   const [currentResult, setCurrentResult] = useState("");
   const [remainingWords, setRemainingWords] = useState([]);
+  const [bestGuess, setBestGuess] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -37,6 +38,7 @@ function App() {
 
       const data = await res.json();
       setRemainingWords(data.remaining);
+      setBestGuess(data.best_guess);
       setError("");
     } catch (err) {
       setError("❌ Couldn't connect to server.");
@@ -51,7 +53,12 @@ function App() {
     setCurrentWord("");
     setCurrentResult("");
     setRemainingWords([]);
+    setBestGuess("");
     setError("");
+  };
+
+  const fillGuess = (word) => {
+    setCurrentWord(word);
   };
 
   return (
@@ -73,20 +80,20 @@ function App() {
         />
         <button type="submit">Submit</button>
       </form>
-      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
-  <button onClick={resetGame} style={{
-    backgroundColor: "#f44336",
-    color: "white",
-    padding: "0.6rem 1.2rem",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    marginTop: "1rem"
-  }}>
-    🔁 Restart Game
-  </button>
-</div>
 
+      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+        <button onClick={resetGame} style={{
+          backgroundColor: "#f44336",
+          color: "white",
+          padding: "0.6rem 1.2rem",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          marginTop: "1rem"
+        }}>
+          🔁 Restart Game
+        </button>
+      </div>
 
       {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
 
@@ -96,7 +103,13 @@ function App() {
           <ul>
             {guesses.map((g, i) => (
               <li key={i}>
-                <code>{g.word}</code> — <code>{g.result}</code>
+                <code
+                  style={{ cursor: "pointer" }}
+                  title="Click to reuse this guess"
+                  onClick={() => fillGuess(g.word)}
+                >
+                  {g.word}
+                </code> — <code>{g.result}</code>
               </li>
             ))}
           </ul>
@@ -108,15 +121,41 @@ function App() {
           <h2>Remaining Possible Words</h2>
           <div className="word-grid">
             {remainingWords.map((word, i) => (
-              <div className="word-tile" key={i}>
-                {word}
-              </div>
+              <div
+              className="word-tile"
+              key={i}
+              onClick={() => fillGuess(word)}
+              title="Click to use this word as your guess"
+              style={{ cursor: "pointer" }}
+            >
+              {word}
+            </div>
+            
             ))}
           </div>
         </>
+      )}
+
+      {bestGuess && (
+        <div style={{ textAlign: "center", marginTop: "2rem" }}>
+          <h2>💡 Suggested Next Guess</h2>
+          <div
+            onClick={() => fillGuess(bestGuess)}
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+              color: "#4caf50",
+              cursor: "pointer",
+              textDecoration: "underline"
+            }}
+            title="Click to use this as your next guess"
+          >
+            {bestGuess}
+          </div>
+        </div>
       )}
     </div>
   );
 }
 
-export default App; 
+export default App;
