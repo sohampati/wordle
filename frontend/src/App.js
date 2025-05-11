@@ -20,11 +20,22 @@ function App() {
       return;
     }
 
+    if (!/^[bgy]{5}$/.test(trimmedResult)) {
+      setError("Result must be exactly 5 letters using only 'b', 'g', or 'y'.");
+      return;
+    }
+
     const newGuesses = [...guesses, { word: trimmedWord, result: trimmedResult }];
     setGuesses(newGuesses);
 
     if (trimmedResult === "ggggg") {
       alert("🎉 You solved it! Resetting...");
+      resetGame();
+      return;
+    }
+
+    if (newGuesses.length === 6 && trimmedResult !== "ggggg") {
+      alert("❌ You've used all 6 guesses without solving. Restarting game.");
       resetGame();
       return;
     }
@@ -104,7 +115,7 @@ function App() {
             {guesses.map((g, i) => (
               <li key={i}>
                 <code
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: "pointer", textDecoration: "underline" }}
                   title="Click to reuse this guess"
                   onClick={() => fillGuess(g.word)}
                 >
@@ -122,15 +133,14 @@ function App() {
           <div className="word-grid">
             {remainingWords.map((word, i) => (
               <div
-              className="word-tile"
-              key={i}
-              onClick={() => fillGuess(word)}
-              title="Click to use this word as your guess"
-              style={{ cursor: "pointer" }}
-            >
-              {word}
-            </div>
-            
+                className="word-tile"
+                key={i}
+                onClick={() => fillGuess(word)}
+                title="Click to use this word as your guess"
+                style={{ cursor: "pointer", textDecoration: "underline" }}
+              >
+                {word}
+              </div>
             ))}
           </div>
         </>
