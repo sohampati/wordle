@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import "./index.css"; // make sure this line is here
 import { signOut } from "firebase/auth";
 import { auth } from "./firebase";
+import { doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { db } from "./firebase";
+
+
 
 
 function App() {
@@ -77,7 +81,13 @@ function App() {
     setBestGuess("");
     setError("");
   };
-
+  const saveGame = async (uid, guesses) => {
+    const userRef = doc(db, "users", uid);
+    await setDoc(userRef, { games: [] }, { merge: true });
+    await updateDoc(userRef, {
+      games: arrayUnion({ timestamp: Date.now(), guesses })
+    });
+  }; 
   const fillGuess = (word) => {
     setCurrentWord(word);
   };
