@@ -24,4 +24,4 @@ yarn-error.log*
 
 venv/
 
-.env.local
+.env.localnode_modules/ 
