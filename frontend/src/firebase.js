@@ -7,7 +7,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCStb-PFJcCQafj11d9M7vxbxsJjCH0vKI",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: "wordlesolve.firebaseapp.com",
   projectId: "wordlesolve",
   storageBucket: "wordlesolve.firebasestorage.app",
